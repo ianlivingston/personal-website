@@ -1,0 +1,21 @@
+services:
+  api-server:
+    build: .
+    depends_on:
+      db:
+          condition: service_healthy
+  db:
+    image: postgres:18-alpine
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d temp"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: temp
+    ports:
+      - "5432:5432"
+    restart: always
