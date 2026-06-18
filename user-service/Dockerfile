@@ -1,17 +1,14 @@
 #Stage 1
 FROM golang:1.26 AS build
-RUN useradd api
-WORKDIR /app
+WORKDIR /build
 COPY go.mod go.sum ./
 RUN go mod download
 COPY *.go ./
-RUN go build -o app
+RUN CGO_ENABLED=0 GOOS=linux go build -o app
 
 #Stage 2
-FROM gcr.io/distroless/static-debian12 AS run
-WORKDIR /app
+FROM gcr.io/distroless/static-debian13:nonroot AS run
+WORKDIR /
 EXPOSE 8000
-COPY --from=build /etc/passwd /etc/passwd
-USER api
-COPY --from=build app .
-CMD ["./app"]
+COPY --from=build /build/app /
+CMD ["/app"]
