@@ -16,10 +16,13 @@ func readJSON[T any](data io.Reader, ptr *T) error {
 	return err
 }
 
-func jsonResponse(w http.ResponseWriter, status int, message string) error {
+func (s *Server) jsonResponse(w http.ResponseWriter, status int, message string) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	return json.NewEncoder(w).Encode(message)
+	err := json.NewEncoder(w).Encode(message)
+	if err != nil {
+		s.logger.Error("failed to encode json response", "Error:", err)
+	}
 }
 
 func createPasswordHash(password string) []byte {

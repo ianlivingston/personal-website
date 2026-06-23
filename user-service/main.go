@@ -11,7 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type Connections struct {
+type Server struct {
 	pool   *pgxpool.Pool
 	logger *slog.Logger
 }
@@ -22,7 +22,7 @@ const (
 
 func main() {
 	db := MakePool(context.Background(), os.Getenv("DATABASE_URL"))
-	con := Connections{db, slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))}
+	con := Server{db, slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))}
 	defer con.pool.Close()
 
 	mux := http.NewServeMux()

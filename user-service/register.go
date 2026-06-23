@@ -15,7 +15,7 @@ type userCredentials struct {
 	Password string `json:"password"`
 }
 
-func (con *Connections) register(w http.ResponseWriter, r *http.Request) {
+func (s *Server) register(w http.ResponseWriter, r *http.Request) {
 	var newUser userCredentials
 
 	err := json.NewDecoder(r.Body).Decode(&newUser)
@@ -25,21 +25,21 @@ func (con *Connections) register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := r.Context()
-	_, err = con.pool.Exec(ctx, "INSERT INTO users (username, password_hash) VALUES ($1, $2)", newUser.Username, createPasswordHash(newUser.Password))
+	_, err = s.pool.Exec(ctx, "INSERT INTO users (username, password_hash) VALUES ($1, $2)", newUser.Username, createPasswordHash(newUser.Password))
 	if err != nil {
 		if pgErr, ok := errors.AsType[*pgconn.PgError](err); ok {
 			switch pgErr.Code {
 			case PostgresUniqueError:
-				con.logger.Error("user already exists: ", "username", newUser.Username)
-				jsonResponse(w, http.StatusConflict, "user already exists")
+				s.logger.Error("user already exists: ", "username", newUser.Username)
+				s.jsonResponse(w, http.StatusConflict, "user already exists")
 				return
 			}
 		}
 
-		con.logger.Error("DB failed adding user", "username", newUser.Username, "error", err)
-		jsonResponse(w, http.StatusInternalServerError, "DB failed adding user: "+err.Error())
+		s.logger.Error("DB failed adding user", "username", newUser.Username, "error", err)
+		s.jsonResponse(w, http.StatusInternalServerError, "DB failed adding user: "+err.Error())
 		return
 	}
 
-	jsonResponse(w, http.StatusCreated, "user registered successfully")
+	s.jsonResponse(w, http.StatusCreated, "user registered successfully")
 }
