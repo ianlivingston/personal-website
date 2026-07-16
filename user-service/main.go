@@ -27,6 +27,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /users", con.register)
+	mux.HandleFunc("POST /login", con.Login)
 	srv := &http.Server{
 		Addr:         PORT,
 		Handler:      mux,

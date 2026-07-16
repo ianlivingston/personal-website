@@ -25,7 +25,8 @@ func (s *Server) register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := r.Context()
-	_, err = s.pool.Exec(ctx, "INSERT INTO users (username, password_hash) VALUES ($1, $2)", newUser.Username, createPasswordHash(newUser.Password))
+	ph := createPasswordHash(newUser.Password)
+	_, err = s.pool.Exec(ctx, "INSERT INTO users (username, password_hash) VALUES ($1, $2)", newUser.Username, ph)
 	if err != nil {
 		if pgErr, ok := errors.AsType[*pgconn.PgError](err); ok {
 			switch pgErr.Code {

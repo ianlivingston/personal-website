@@ -11,6 +11,14 @@ import (
 	"golang.org/x/crypto/argon2"
 )
 
+const (
+	m          = 1024 * 64
+	t          = 1
+	p          = 2
+	saltLength = 16
+	keyLength  = 32
+)
+
 func readJSON[T any](data io.Reader, ptr *T) error {
 	err := json.NewDecoder(data).Decode(ptr)
 	return err
@@ -26,19 +34,11 @@ func (s *Server) jsonResponse(w http.ResponseWriter, status int, message string)
 }
 
 func createPasswordHash(password string) []byte {
-
-	const (
-		m          = 1024 * 64
-		t          = 1
-		p          = 2
-		saltLength = 16
-		keyLength  = 32
-	)
-
 	salt, _ := createSalt(saltLength)
 	hash := argon2.IDKey([]byte(password), salt, t, m, p, keyLength)
-	b64Password := base64.StdEncoding.EncodeToString(hash)
-	passwordHashString := fmt.Sprintf("$argon2id$v=19$m=%d,t=%d,p=%d$%s$%s", m, t, p, salt, b64Password)
+	b64Salt := base64.RawStdEncoding.EncodeToString(salt)
+	b64Password := base64.RawStdEncoding.EncodeToString(hash)
+	passwordHashString := fmt.Sprintf("$argon2id$v=19$m=%d,t=%d,p=%d$%s$%s", m, t, p, b64Salt, b64Password)
 	return []byte(passwordHashString)
 }
 
