@@ -73,6 +73,15 @@ resource "aws_s3_object" "home_css" {
   content_type = "text/css"
 }
 
+resource "aws_acm_certificate" "home" {
+  domain_name       = "ianlivingston.dev"
+  validation_method = "DNS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 output "website_endpoint" {
   value = aws_s3_bucket_website_configuration.website.website_endpoint
 }

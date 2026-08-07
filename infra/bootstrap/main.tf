@@ -120,7 +120,8 @@ data "aws_iam_policy_document" "deploy" {
     actions = [
       "lambda:*",
       "logs:*",
-      "s3:*"
+      "s3:*",
+      "acm:*",
     ]
     resources = ["*"]
   }
