@@ -122,6 +122,7 @@ data "aws_iam_policy_document" "deploy" {
       "logs:*",
       "s3:*",
       "acm:*",
+      "cloudfront:*"
     ]
     resources = ["*"]
   }

@@ -9,10 +9,23 @@ data "aws_iam_policy_document" "public_website" {
   statement {
     effect = "Allow"
     principals {
-      identifiers = ["*"]
-      type        = "*"
+      identifiers = ["cloudfront.amazonaws.com"]
+      type        = "Service"
     }
     actions   = ["s3:GetObject"]
     resources = ["${aws_s3_bucket.website.arn}/*"]
   }
+}
+
+locals {
+  root_object = "index.html"
+  home_origin = "home-page"
+}
+
+data "aws_cloudfront_cache_policy" "optimized" {
+  name = "Managed-CachingOptimized"
+}
+
+data "aws_cloudfront_cache_policy" "optimized_uncompressed" {
+  name = "Managed-CachingOptimizedForUncompressedObjects"
 }
