@@ -20,6 +20,7 @@ data "aws_iam_policy_document" "public_website" {
 locals {
   root_object = "index.html"
   home_origin = "home-page"
+  apex_domain = "ianlivingston.dev"
 }
 
 data "aws_cloudfront_cache_policy" "optimized" {

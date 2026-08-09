@@ -63,7 +63,7 @@ resource "aws_s3_object" "home_css" {
 }
 
 resource "aws_acm_certificate" "home" {
-  domain_name       = "ianlivingston.dev"
+  domain_name       = local.apex_domain
   validation_method = "DNS"
 
   lifecycle {
@@ -81,6 +81,7 @@ resource "aws_cloudfront_distribution" "website" {
   enabled             = true
   is_ipv6_enabled     = true
   default_root_object = local.root_object
+  aliases             = [local.apex_domain]
 
   default_cache_behavior {
     allowed_methods        = ["HEAD", "DELETE", "GET", "POST", "OPTIONS", "PUT", "PATCH"]
