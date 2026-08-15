@@ -48,20 +48,6 @@ resource "aws_s3_bucket_policy" "website" {
   policy = data.aws_iam_policy_document.public_website.json
 }
 
-resource "aws_s3_object" "home_html" {
-  bucket       = aws_s3_bucket.website.id
-  key          = local.root_object
-  source       = "../home-page/index.html"
-  content_type = "text/html"
-}
-
-resource "aws_s3_object" "home_css" {
-  bucket       = aws_s3_bucket.website.id
-  key          = "index.css"
-  source       = "../home-page/index.css"
-  content_type = "text/css"
-}
-
 resource "aws_acm_certificate" "home" {
   domain_name       = local.apex_domain
   validation_method = "DNS"
