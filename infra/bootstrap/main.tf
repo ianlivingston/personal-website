@@ -16,8 +16,8 @@ provider "aws" {
   region = var.region
 }
 
-variable "gh_repo" {
-  type = string
+variable "gh_repos" {
+  type = list(string)
 }
 
 variable "region" {
@@ -108,7 +108,7 @@ data "aws_iam_policy_document" "trust" {
     }
     condition {
       test     = "StringEquals"
-      values   = ["repo:${var.gh_repo}:ref:refs/heads/main"]
+      values   = [for r in var.gh_repos : "repo:${r}:ref:refs/heads/main"]
       variable = "${var.oidc_provider_domain}:sub"
     }
   }
